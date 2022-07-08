@@ -1,37 +1,27 @@
 package goffee
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strings"
 )
 
 // HandlerFunc 将网络气请求处理进行定义，给goffee使用
-type HandlerFunc func(w http.ResponseWriter, r *http.Request)
+type HandlerFunc func(ctx *Context)
 
 // Engine 用于实现ServeHTTP的接口
 type Engine struct {
 	// 添加路由映射表
-	router map[string]HandlerFunc
+	router *router
 }
 
 // New 调用来构造一个goffee引擎
 func New() *Engine {
-	return &Engine{router: make(map[string]HandlerFunc)}
+	return &Engine{router: newRouter()}
 }
 
 // addRouter 添加路由到路由映射表里面
 func (e *Engine) addRouter(method string, pattern string, handler HandlerFunc) {
-	// 使用strings.builder拼接字符串，提升速度
-	var key strings.Builder
-	key.WriteString(method)
-	key.WriteString("-")
-	key.WriteString(pattern)
-	// 成功添加后将其打在日志中
-	defer log.Printf("Route %4s - %s", method, pattern)
-
-	e.router[key.String()] = handler
+	e.router.addRouter(method, pattern, handler)
 }
 
 // GET 新增GET请求
@@ -56,20 +46,12 @@ func (e *Engine) DELETE(pattern string, handler HandlerFunc) {
 
 // ServeHTTP 实现方法ServeHTTP
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// 使用strings.builder拼接字符串，提升速度
-	var key strings.Builder
-	key.WriteString(req.Method)
-	key.WriteString("-")
-	key.WriteString(req.URL.Path)
-	// 去到路由映射表中检查是否有此路由，若有则进行处理，若无则报错404
-	if handler, ok := e.router[key.String()]; ok {
-		handler(w, req)
-	} else {
-		fmt.Fprintf(w, "404 Not Found: %s\n", req.URL)
-	}
+	ctx := newContext(w, req)
+	e.router.handle(ctx)
 }
 
 // Run 定义了启动http服务器的方法
 func (e *Engine) Run(addr string) error {
+	log.Printf("The project is listening on port %s\n", addr)
 	return http.ListenAndServe(addr, e)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"goffee"
@@ -10,16 +10,23 @@ import (
 func main() {
 	r := goffee.New()
 
-	r.GET("/", test)
 	r.GET("/hello", hello)
+	r.POST("/login", login)
 
-	r.Run(":9999")
+	err := r.Run(":9999")
+	if err != nil {
+		log.Println("run engine error, err:", err)
+		return
+	}
 }
 
-func test(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "URL.Path = %q\n", req.URL.Path)
+func hello(ctx *goffee.Context) {
+	ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Query("name"), ctx.Path)
 }
 
-func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "Hello, World %q\n", req.URL)
+func login(ctx *goffee.Context) {
+	ctx.JSON(http.StatusOK, goffee.H{
+		"username": ctx.PostForm("username"),
+		"password": ctx.PostForm("password"),
+	})
 }
