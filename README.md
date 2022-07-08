@@ -1,4 +1,6 @@
 # goffee
 A lightweight web framework
 
-**Learn from geektutu**
+It's still being built.
+It will learn the advantages of excellent frameworks 
+such as Gin, Gee, Hertz, etc.
