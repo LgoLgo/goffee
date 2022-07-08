@@ -9,15 +9,17 @@ import (
 
 func main() {
 	r := goffee.New()
-	r.GET("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "URL.Path = %q\n", req.URL.Path)
-	})
 
-	r.GET("/hello", func(w http.ResponseWriter, req *http.Request) {
-		for k, v := range req.Header {
-			fmt.Fprintf(w, "Header[%q] = %q\n", k, v)
-		}
-	})
+	r.GET("/", test)
+	r.GET("/hello", hello)
 
 	r.Run(":9999")
+}
+
+func test(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "URL.Path = %q\n", req.URL.Path)
+}
+
+func hello(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "Hello, World %q\n", req.URL)
 }
