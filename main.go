@@ -10,8 +10,11 @@ import (
 func main() {
 	r := goffee.New()
 
-	r.GET("/hello", hello)
-	r.GET("/hello/:name", helloById)
+	hello := r.Group("/hello")
+	{
+		hello.GET("/test", helloTest)
+		hello.GET("/:name", helloById)
+	}
 
 	r.POST("/login", login)
 
@@ -26,7 +29,7 @@ func main() {
 	}
 }
 
-func hello(ctx *goffee.Context) {
+func helloTest(ctx *goffee.Context) {
 	ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Query("name"), ctx.Path)
 }
 
