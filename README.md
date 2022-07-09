@@ -1,12 +1,11 @@
 # goffee
-A lightweight GoWeb framework/一个轻量级的GoWeb框架
+A lightweight Go framework/一个轻量级的Go语言开发框架
 
 ## 前言
 It's still being built.
-It will learn the advantages of excellent frameworks 
-such as Gin, Gee, Hertz, etc.
+It will integrate Web, RPC, ORM frameworks in one.
 
-还在建造中，它将缝合Gin、Gee、Hertz等轻量级框架的优点于一身
+还在建造中，它将会集合Web,RPC,ORM框架于一身
 
 
 ## 日志
@@ -16,3 +15,5 @@ Day2 提供了对 Method 和 Path 这两个常用属性的直接访问。
 提供了访问Query和PostForm参数的方法。
 提供了快速构造String/Data/JSON/HTML响应的方法。
 将路由相关功能单独抽离了出来
+
+Day3 通过前缀树实现了动态路由的功能

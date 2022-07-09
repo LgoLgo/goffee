@@ -11,7 +11,13 @@ func main() {
 	r := goffee.New()
 
 	r.GET("/hello", hello)
+	r.GET("/hello/:name", helloById)
+
 	r.POST("/login", login)
+
+	r.GET("/assets/*filepath", func(ctx *goffee.Context) {
+		ctx.JSON(http.StatusOK, goffee.H{"filepath": ctx.Param("filepath")})
+	})
 
 	err := r.Run(":9999")
 	if err != nil {
@@ -22,6 +28,10 @@ func main() {
 
 func hello(ctx *goffee.Context) {
 	ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Query("name"), ctx.Path)
+}
+
+func helloById(ctx *goffee.Context) {
+	ctx.String(http.StatusOK, "hello %s, you're at %s\n", ctx.Param("name"), ctx.Path)
 }
 
 func login(ctx *goffee.Context) {

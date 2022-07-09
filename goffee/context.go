@@ -17,6 +17,7 @@ type Context struct {
 	// 请求路径、方法
 	Path   string
 	Method string
+	Params map[string]string
 	// 响应状态码
 	StatusCode int
 }
@@ -29,6 +30,12 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Path:   req.URL.Path,
 		Method: req.Method,
 	}
+}
+
+// Param 实现动态路由
+func (ctx *Context) Param(key string) string {
+	value, _ := ctx.Params[key]
+	return value
 }
 
 // PostForm 访问PostForm参数
