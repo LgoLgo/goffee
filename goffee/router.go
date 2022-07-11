@@ -93,15 +93,18 @@ func (r *router) handle(ctx *Context) {
 	//得到路由
 	n, params := r.getRoute(ctx.Method, ctx.Path)
 	if n != nil {
-		ctx.Params = params
 		// 使用strings.builder拼接字符串，提升速度
 		var key strings.Builder
 		key.WriteString(ctx.Method)
 		key.WriteString("-")
 		key.WriteString(n.pattern)
-		r.handlers[key.String()](ctx)
+		ctx.Params = params
+		ctx.handlers = append(ctx.handlers, r.handlers[key.String()])
 	} else {
 		// 去到路由映射表中检查是否有此路由，若有则进行处理，若无则报错404
-		ctx.String(http.StatusNotFound, "404 Not Found: %s\n", ctx.Path)
+		ctx.handlers = append(ctx.handlers, func(ctx *Context) {
+			ctx.String(http.StatusNotFound, "404 Not Found: %s\n", ctx.Path)
+		})
 	}
+	ctx.Next()
 }

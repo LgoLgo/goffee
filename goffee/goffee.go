@@ -3,9 +3,10 @@ package goffee
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
-// HandlerFunc 将网络气请求处理进行定义，给goffee使用
+// HandlerFunc 将网络请求处理进行定义，给goffee使用
 type HandlerFunc func(ctx *Context)
 
 // Engine 用于实现ServeHTTP的接口
@@ -75,10 +76,22 @@ func (g *RouterGroup) DELETE(pattern string, handler HandlerFunc) {
 	g.addRouter("DELETE", pattern, handler)
 }
 
+// Use 将中间件添加到中间件组中
+func (g *RouterGroup) Use(middlewares ...HandlerFunc) {
+	g.middlewares = append(g.middlewares, middlewares...)
+}
+
 // ServeHTTP 实现方法ServeHTTP
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	ctx := newContext(w, req)
-	e.router.handle(ctx)
+	var middlewares []HandlerFunc
+	for _, group := range e.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+	c := newContext(w, req)
+	c.handlers = middlewares
+	e.router.handle(c)
 }
 
 // Run 定义了启动http服务器的方法

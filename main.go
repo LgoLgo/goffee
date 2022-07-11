@@ -9,6 +9,7 @@ import (
 
 func main() {
 	r := goffee.New()
+	r.Use(goffee.Logger())
 
 	hello := r.Group("/hello")
 	{

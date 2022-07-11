@@ -20,6 +20,9 @@ type Context struct {
 	Params map[string]string
 	// 响应状态码
 	StatusCode int
+	// 中间件
+	handlers []HandlerFunc
+	index    int
 }
 
 // newContext 构造一个新的上下文
@@ -29,6 +32,16 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
+	}
+}
+
+// Next 中间件可等待用户自己定义的 Handler处理结束后，再做一些额外的操作
+func (ctx *Context) Next() {
+	ctx.index++
+	s := len(ctx.handlers)
+	for ; ctx.index < s; ctx.index++ {
+		ctx.handlers[ctx.index](ctx)
 	}
 }
 
