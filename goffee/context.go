@@ -23,6 +23,7 @@ type Context struct {
 	// 中间件
 	handlers []HandlerFunc
 	index    int
+	engine   *Engine
 }
 
 // newContext 构造一个新的上下文
@@ -96,8 +97,10 @@ func (ctx *Context) Data(code int, data []byte) {
 }
 
 // HTML 构造HTML响应
-func (ctx *Context) HTML(code int, html string) {
+func (ctx *Context) HTML(code int, name string, data interface{}) {
 	ctx.SetHeader("Content-Type", "text/html")
 	ctx.Status(code)
-	ctx.Writer.Write([]byte(html))
+	if err := ctx.engine.htmlTemplates.ExecuteTemplate(ctx.Writer, name, data); err != nil {
+		ctx.Fail(500, err.Error())
+	}
 }
