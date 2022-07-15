@@ -46,6 +46,11 @@ func (ctx *Context) Next() {
 	}
 }
 
+func (ctx *Context) Fail(code int, err string) {
+	ctx.index = len(ctx.handlers)
+	ctx.JSON(code, H{"message": err})
+}
+
 // Param 实现动态路由
 func (ctx *Context) Param(key string) string {
 	value, _ := ctx.Params[key]

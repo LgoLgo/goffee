@@ -1,8 +1,10 @@
 package goffee
 
 import (
+	"html/template"
 	"log"
 	"net/http"
+	"path"
 	"strings"
 )
 
@@ -84,8 +86,8 @@ func (g *RouterGroup) Use(middlewares ...HandlerFunc) {
 }
 
 // createStaticHandler
-func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
-	absolutePath := path.Join(group.prefix, relativePath)
+func (g *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+	absolutePath := path.Join(g.prefix, relativePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
 	return func(c *Context) {
 		file := c.Param("filepath")
@@ -99,12 +101,11 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	}
 }
 
-// Static
-func (group *RouterGroup) Static(relativePath string, root string) {
-	handler := group.createStaticHandler(relativePath, http.Dir(root))
+func (g *RouterGroup) Static(relativePath string, root string) {
+	handler := g.createStaticHandler(relativePath, http.Dir(root))
 	urlPattern := path.Join(relativePath, "/*filepath")
 	// Register GET handlers
-	group.GET(urlPattern, handler)
+	g.GET(urlPattern, handler)
 }
 
 func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
@@ -116,9 +117,9 @@ func (engine *Engine) LoadHTMLGlob(pattern string) {
 }
 
 // ServeHTTP 实现方法ServeHTTP
-func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	var middlewares []HandlerFunc
-	for _, group := range e.groups {
+	for _, group := range engine.groups {
 		if strings.HasPrefix(req.URL.Path, group.prefix) {
 			middlewares = append(middlewares, group.middlewares...)
 		}
@@ -126,11 +127,11 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := newContext(w, req)
 	c.handlers = middlewares
 	c.engine = engine
-	e.router.handle(c)
+	engine.router.handle(c)
 }
 
 // Run 定义了启动http服务器的方法
-func (e *Engine) Run(addr string) error {
+func (engine *Engine) Run(addr string) error {
 	log.Printf("The project is listening on port %s\n", addr)
-	return http.ListenAndServe(addr, e)
+	return http.ListenAndServe(addr, engine)
 }
