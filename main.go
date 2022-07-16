@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	r := goffee.New()
-	r.Use(goffee.Logger())
+	r := goffee.Default()
 
 	hello := r.Group("/hello")
 	{
@@ -21,6 +20,11 @@ func main() {
 
 	r.GET("/assets/*filepath", func(ctx *goffee.Context) {
 		ctx.JSON(http.StatusOK, goffee.H{"filepath": ctx.Param("filepath")})
+	})
+
+	r.GET("/panic", func(c *goffee.Context) {
+		names := []string{"goffee"}
+		c.String(http.StatusOK, names[100])
 	})
 
 	err := r.Run(":9999")

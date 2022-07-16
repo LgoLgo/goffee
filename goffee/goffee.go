@@ -40,6 +40,13 @@ func New() *Engine {
 	return engine
 }
 
+// Default 默认使用Logger和Recovery中间价
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
+	return engine
+}
+
 // Group 实现一个新的分组，所有组共用同一个引擎
 func (g *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := g.engine
