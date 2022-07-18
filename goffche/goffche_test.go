@@ -26,7 +26,7 @@ func TestGetter(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	loadCounts := make(map[string]int, len(db))
-	gee := NewGroup("scores", 2<<10, GetterFunc(
+	goffee := NewGroup("scores", 2<<10, GetterFunc(
 		func(key string) ([]byte, error) {
 			log.Println("[SlowDB] search key", key)
 			if v, ok := db[key]; ok {
@@ -40,15 +40,15 @@ func TestGet(t *testing.T) {
 		}))
 
 	for k, v := range db {
-		if view, err := gee.Get(k); err != nil || view.String() != v {
+		if view, err := goffee.Get(k); err != nil || view.String() != v {
 			t.Fatal("failed to get value of Tom")
 		}
-		if _, err := gee.Get(k); err != nil || loadCounts[k] > 1 {
+		if _, err := goffee.Get(k); err != nil || loadCounts[k] > 1 {
 			t.Fatalf("cache %s miss", k)
 		}
 	}
 
-	if view, err := gee.Get("unknown"); err == nil {
+	if view, err := goffee.Get("unknown"); err == nil {
 		t.Fatalf("the value of unknow should be empty, but %s got", view)
 	}
 }
