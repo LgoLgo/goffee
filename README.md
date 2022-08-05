@@ -34,3 +34,5 @@ It will integrate HTTP, Cache, RPC, ORM frameworks in one.
 2022.7.18 使用互斥锁完成封装，支持并发
 
 2022.7.19 完成缓存的HTTP服务端
+
+2022.8.5 实现了一致性哈希
