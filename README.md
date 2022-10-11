@@ -1,14 +1,67 @@
 # goffee
-A lightweight Go framework/一个轻量级的Go语言开发框架
+A lightweight Go framework/轻量级的Go语言开发框架
 
 ## 前言
 It's still being built.
-It will integrate HTTP, Cache, RPC, ORM frameworks in one.
 
-还在建造中，它将会集合Web,RPC,ORM框架于一身
+还在建造中
+
+## 安装
+
+1. 需要已经安装 [Go](https://golang.org/)
+
+```sh
+go get -u github.com/L2ncE/goffee
+```
+
+2. 将它 import 到你的代码中
+
+```go
+import "github.com/L2ncE/goffee"
+```
+
+## 快速开始
+
+```go
+package main
 
 
-## 日志
+import (
+	"log"
+	"net/http"
+
+	"goffee"
+)
+
+func main() {
+	r := goffee.Default()
+
+	hello := r.Group("/hello")
+	{
+		hello.GET("/test", helloTest)
+		hello.GET("/:name", helloById)
+	}
+
+	r.POST("/login", login)
+
+	r.GET("/assets/*filepath", func(ctx *goffee.Context) {
+		ctx.JSON(http.StatusOK, goffee.H{"filepath": ctx.Param("filepath")})
+	})
+
+	r.GET("/panic", func(c *goffee.Context) {
+		names := []string{"goffee"}
+		c.String(http.StatusOK, names[100])
+	})
+
+	err := r.Run(":9999")
+	if err != nil {
+		log.Println("run engine error, err:", err)
+		return
+	}
+}
+```
+
+## 开发日志
 
 ### HTTP
 
