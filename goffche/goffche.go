@@ -11,6 +11,7 @@ type Group struct {
 	name      string
 	getter    Getter // 缓存未命中时获取源数据的回调
 	mainCache cache  // 开始的并发缓存
+	peers     PeerPicker
 }
 
 // Getter 为key加载数据
@@ -73,6 +74,15 @@ func (g *Group) Get(key string) (ByteView, error) {
 
 // load 用于调用getLocally
 func (g *Group) load(key string) (value ByteView, err error) {
+	if g.peers != nil {
+		if peer, ok := g.peers.PickPeer(key); ok {
+			if value, err = g.getFromPeer(peer, key); err == nil {
+				return value, nil
+			}
+			log.Println("[goffche] Failed to get from peer", err)
+		}
+	}
+
 	return g.getLocally(key)
 }
 
@@ -92,4 +102,20 @@ func (g *Group) getLocally(key string) (ByteView, error) {
 
 func (g *Group) populateCache(key string, value ByteView) {
 	g.mainCache.add(key, value)
+}
+
+// RegisterPeers 注册一个 PeerPicker 来选择远端 peers
+func (g *Group) RegisterPeers(peers PeerPicker) {
+	if g.peers != nil {
+		panic("RegisterPeerPicker called more than once")
+	}
+	g.peers = peers
+}
+
+func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
+	bytes, err := peer.Get(g.name, key)
+	if err != nil {
+		return ByteView{}, err
+	}
+	return ByteView{b: bytes}, nil
 }
