@@ -1,8 +1,8 @@
 package Lgoffche
 
 import (
+	"Lgoffche/consistenthash"
 	"fmt"
-	"goffche/consistenthash"
 	"io/ioutil"
 	"log"
 	"net/http"

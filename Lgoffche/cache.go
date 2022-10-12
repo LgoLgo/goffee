@@ -1,7 +1,7 @@
 package Lgoffche
 
 import (
-	"goffche/lru"
+	"Lgoffche/lru"
 	"sync"
 )
 
