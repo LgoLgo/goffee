@@ -1,4 +1,4 @@
-package goffee
+package Lgoffee
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func TestParsePattern(t *testing.T) {
 
 func TestGetRoute(t *testing.T) {
 	r := newTestRouter()
-	n, ps := r.getRoute("GET", "/hello/goffee")
+	n, ps := r.getRoute("GET", "/hello/Lgoffee")
 
 	if n == nil {
 		t.Fatal("nil shouldn't be returned")
@@ -38,8 +38,8 @@ func TestGetRoute(t *testing.T) {
 		t.Fatal("should match /hello/:name")
 	}
 
-	if ps["name"] != "goffee" {
-		t.Fatal("name should be equal to 'goffee'")
+	if ps["name"] != "Lgoffee" {
+		t.Fatal("name should be equal to 'Lgoffee'")
 	}
 	fmt.Printf("matched path: %s, params['name']: %s\n", n.pattern, ps["name"])
 }
