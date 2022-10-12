@@ -1,3 +1,3 @@
-module goffee
+module Lgoffee
 
 go 1.18
