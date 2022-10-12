@@ -11,13 +11,13 @@ It's still being built.
 1. 需要已经安装 [Go](https://golang.org/)
 
 ```sh
-go get -u github.com/L2ncE/goffee
+go get -u github.com/LgoLgo/Lgoffee
 ```
 
 2. 将它 import 到你的代码中
 
 ```go
-import "github.com/L2ncE/goffee"
+import "github.com/LgoLgo/Lgoffee"
 ```
 
 ## 快速开始
@@ -32,11 +32,11 @@ import (
 	"log"
 	"net/http"
 
-	"goffee"
+	"github.com/LgoLgo/Lgoffee"
 )
 
 func main() {
-	r := goffee.Default()
+	r := Lgoffee.Default()
 
 	hello := r.Group("/hello")
 	{
@@ -46,12 +46,12 @@ func main() {
 
 	r.POST("/login", login)
 
-	r.GET("/assets/*filepath", func(ctx *goffee.Context) {
-		ctx.JSON(http.StatusOK, goffee.H{"filepath": ctx.Param("filepath")})
+	r.GET("/assets/*filepath", func(ctx *Lgoffee.Context) {
+		ctx.JSON(http.StatusOK, Lgoffee.H{"filepath": ctx.Param("filepath")})
 	})
 
-	r.GET("/panic", func(c *goffee.Context) {
-		names := []string{"goffee"}
+	r.GET("/panic", func(c *Lgoffee.Context) {
+		names := []string{"Lgoffee"}
 		c.String(http.StatusOK, names[100])
 	})
 

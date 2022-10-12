@@ -1,4 +1,4 @@
-package goffche
+package Lgoffche
 
 // ByteView 只读数据结构，用来表示缓存值
 type ByteView struct {

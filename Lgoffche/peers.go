@@ -1,4 +1,4 @@
-package goffche
+package Lgoffche
 
 // PeerPicker 为必须实现定位的接口
 type PeerPicker interface {

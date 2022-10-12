@@ -1,4 +1,4 @@
-package goffee
+package Lgoffee
 
 import (
 	"fmt"

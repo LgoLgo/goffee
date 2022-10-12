@@ -2,10 +2,10 @@ module example
 
 go 1.18
 
-require goffee v0.0.0
+require Lgoffee v0.0.0
 
-replace goffee => ./goffee
+replace Lgoffee => ./Lgoffee
 
-require goffche v0.0.0
+require Lgoffche v0.0.0
 
-replace goffche => ./goffche
+replace Lgoffche => ./Lgoffche

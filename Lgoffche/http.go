@@ -1,4 +1,4 @@
-package goffche
+package Lgoffche
 
 import (
 	"fmt"
