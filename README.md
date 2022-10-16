@@ -1,4 +1,4 @@
-# goffee
+# Lgoffee
 A lightweight Go framework/轻量级的Go语言开发框架
 
 ## 前言
@@ -22,7 +22,7 @@ import "github.com/LgoLgo/Lgoffee"
 
 ## 快速开始
 
-### goffee
+### Lgoffee
 
 ```go
 package main
