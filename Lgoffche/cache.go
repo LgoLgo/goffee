@@ -1,8 +1,9 @@
 package Lgoffche
 
 import (
-	"Lgoffche/lru"
 	"sync"
+
+	"github.com/LgoLgo/Lgoffee/Lgoffche/lru"
 )
 
 // cache 实例化lru

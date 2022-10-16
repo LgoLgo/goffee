@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"sync"
+
+	"github.com/LgoLgo/Lgoffee/Lgoffche/singleflight"
 )
 
 // Group 缓存命名空间与相关数据加载
@@ -12,6 +14,7 @@ type Group struct {
 	getter    Getter // 缓存未命中时获取源数据的回调
 	mainCache cache  // 开始的并发缓存
 	peers     PeerPicker
+	loader    *singleflight.Group // 确保每个键只获取一次
 }
 
 // Getter 为key加载数据
@@ -43,6 +46,7 @@ func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 		name:      name,
 		getter:    getter,
 		mainCache: cache{cacheBytes: cacheBytes},
+		loader:    &singleflight.Group{},
 	}
 	// 将group存储在全局变量groups中
 	groups[name] = g
@@ -65,7 +69,7 @@ func (g *Group) Get(key string) (ByteView, error) {
 	}
 
 	if v, ok := g.mainCache.get(key); ok {
-		log.Println("[GeeCache] hit")
+		log.Println("[Lgoffche] hit")
 		return v, nil
 	}
 	// 缓存不存在，调用load方法
@@ -74,16 +78,25 @@ func (g *Group) Get(key string) (ByteView, error) {
 
 // load 用于调用getLocally
 func (g *Group) load(key string) (value ByteView, err error) {
-	if g.peers != nil {
-		if peer, ok := g.peers.PickPeer(key); ok {
-			if value, err = g.getFromPeer(peer, key); err == nil {
-				return value, nil
+	// 每个密钥仅获取一次（本地或远程）
+	// 无论并发呼叫者的数量如何
+	view, err := g.loader.Do(key, func() (interface{}, error) {
+		if g.peers != nil {
+			if peer, ok := g.peers.PickPeer(key); ok {
+				if value, err = g.getFromPeer(peer, key); err == nil {
+					return value, nil
+				}
+				log.Println("[Lgoffche] Failed to get from peer", err)
 			}
-			log.Println("[Lgoffche] Failed to get from peer", err)
 		}
-	}
 
-	return g.getLocally(key)
+		return g.getLocally(key)
+	})
+
+	if err == nil {
+		return view.(ByteView), nil
+	}
+	return
 }
 
 func (g *Group) getLocally(key string) (ByteView, error) {

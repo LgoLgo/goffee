@@ -1,7 +1,6 @@
 package Lgoffche
 
 import (
-	"Lgoffche/consistenthash"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,6 +8,8 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+
+	"github.com/LgoLgo/Lgoffee/Lgoffche/consistenthash"
 )
 
 const (
