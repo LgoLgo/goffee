@@ -5,6 +5,7 @@ import (
 	"log"
 	"sync"
 
+	pb "github.com/LgoLgo/Lgoffee/Lgoffche/Lgoffchepb/gen"
 	"github.com/LgoLgo/Lgoffee/Lgoffche/singleflight"
 )
 
@@ -126,9 +127,14 @@ func (g *Group) RegisterPeers(peers PeerPicker) {
 }
 
 func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
-	bytes, err := peer.Get(g.name, key)
+	req := &pb.Request{
+		Group: g.name,
+		Key:   key,
+	}
+	res := &pb.Response{}
+	err := peer.Get(req, res)
 	if err != nil {
 		return ByteView{}, err
 	}
-	return ByteView{b: bytes}, nil
+	return ByteView{b: res.Value}, nil
 }
