@@ -2,10 +2,11 @@ package goffee
 
 import (
 	"fmt"
-	pb "github.com/LgoLgo/goffee/goffeepb"
-	"golang.org/x/sync/singleflight"
 	"log"
 	"sync"
+
+	pb "github.com/LgoLgo/goffee/goffeepb"
+	"golang.org/x/sync/singleflight"
 )
 
 // A Group is a cache namespace and associated data loaded spread over

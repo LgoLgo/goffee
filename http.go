@@ -2,8 +2,6 @@ package goffee
 
 import (
 	"fmt"
-	pb "github.com/LgoLgo/goffee/goffeepb"
-	"google.golang.org/protobuf/proto"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,10 +10,14 @@ import (
 	"sync"
 
 	"github.com/LgoLgo/goffee/consistenthash"
+	pb "github.com/LgoLgo/goffee/goffeepb"
+	"google.golang.org/protobuf/proto"
 )
 
-var _ PeerGetter = (*httpGetter)(nil)
-var _ PeerPicker = (*HTTPPool)(nil)
+var (
+	_ PeerGetter = (*httpGetter)(nil)
+	_ PeerPicker = (*HTTPPool)(nil)
+)
 
 const (
 	defaultBasePath = "/_goffee/"

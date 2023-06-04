@@ -53,11 +53,9 @@ func startAPIServer(apiAddr string, gf *goffee.Group) {
 			}
 			w.Header().Set("Content-Type", "application/octet-stream")
 			w.Write(view.ByteSlice())
-
 		}))
 	log.Println("fontend server is running at", apiAddr)
 	log.Fatal(http.ListenAndServe(apiAddr[7:], nil))
-
 }
 
 func main() {
